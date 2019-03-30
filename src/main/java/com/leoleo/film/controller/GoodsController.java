@@ -19,6 +19,7 @@ public class GoodsController {
     private GoodsService goodsService;
 
 
+
     @PostMapping("getGoodsByGoodsid")
     public Goods getGoodsByGoodsid(String goodsid) {
         Goods goods = goodsService.getGoodsByGoodsid(goodsid);
