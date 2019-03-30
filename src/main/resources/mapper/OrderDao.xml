@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.leoleo.film.dao.OrderDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.leoleo.film.entity.Order" id="orderMap">
+        <result property="id" column="id"/>
+        <result property="orderid" column="orderid"/>
+        <result property="name" column="name"/>
+        <result property="goodsid" column="goodsid"/>
+        <result property="price" column="price"/>
+        <result property="numbers" column="numbers"/>
+    </resultMap>
+
+
+    <select id="getOrderByOrderid" resultMap="orderMap">
+        SELECT *
+        from tb_order
+        where orderid = #{orderid}
+    </select>
+    <insert id="insertOrder" parameterType="com.leoleo.film.entity.Order">
+        insert into tb_order (orderid,name,goodsid,price,numbers) values (#{orderid},#{name},#{goodsid},#{price},#{numbers})
+    </insert>
+    <select id="getOrderByPage" resultMap="orderMap">
+        SELECT * from tb_order limit   #{pageNo}, #{pageSize}
+    </select>
+</mapper>

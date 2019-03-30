@@ -1,0 +1,84 @@
+# Tomcat
+server:
+    tomcat:
+        uri-encoding: UTF-8
+        max-threads: 1000
+        min-spare-threads: 30
+    port: 8086
+    connection-timeout: 5000
+
+spring:
+    mvc:
+        view:
+            prefix: /
+            suffix: .html
+    # ���� dev|test|prod
+    profiles:
+        active: dev
+    # jacksonʱ���ʽ��
+    jackson:
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss
+    http:
+        multipart:
+            max-file-size: 100MB
+            max-request-size: 100MB
+            enabled: true
+    redis:
+        open: false  # �Ƿ���redis����  true����   false�ر�
+        database: 0
+        host: localhost
+        port: 6379
+        password:       # ���루Ĭ��Ϊ�գ�
+        timeout: 6000  # ���ӳ�ʱʱ�������룩
+        pool:
+            max-active: 1000  # ���ӳ������������ʹ�ø�ֵ��ʾû�����ƣ�
+            max-wait: -1      # ���ӳ���������ȴ�ʱ�䣨ʹ�ø�ֵ��ʾû�����ƣ�
+            max-idle: 10      # ���ӳ��е�����������
+            min-idle: 5       # ���ӳ��е���С��������
+
+
+#mybatis
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  #ʵ��ɨ�裬���package�ö��Ż��߷ֺŷָ�
+  typeAliasesPackage: com.leoleo.film.entity
+  global-config:
+    #��������  0:"���ݿ�ID����", 1:"�û�����ID",2:"ȫ��ΨһID (��������ΨһID)", 3:"ȫ��ΨһID UUID";
+    id-type: 0
+    #�ֶβ��� 0:"�����ж�",1:"�� NULL �ж�"),2:"�ǿ��ж�"
+    field-strategy: 2
+    #�շ��»���ת��
+    db-column-underline: true
+    #ˢ��mapper ��������
+    refresh-mapper: true
+    #���ݿ��д�»���ת��
+    #capital-mode: true
+    #���нӿ�ʵ��������
+    #key-generator: com.baomidou.springboot.xxx
+    #�߼�ɾ������
+    logic-delete-value: -1
+    logic-not-delete-value: 0
+    #�Զ��������Խӿ�ʵ��
+    #meta-object-handler: com.baomidou.springboot.xxx
+    #�Զ���SQLע����
+    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+
+wechat:
+    appId: wxc101499f8f9cf224
+    appSecret: a32797b4d382a836b647b76c1a5f4497
+    grantType: authorization_code
+    mchId: 1252369901
+    key: RdFN333cKAFRaJVHu4xrt4QX5gADTaYk
+    notifyUrl: https://debug.wemall.ps.cikers.com/cikers/wechat/notify
+    TRADETYPE: JSAPI
+#     host: http://lan.debug.api.ps.cikers.com:10418/mall/v1.0
+    host: http://newstack.cikers.com:10418/mall/v1.0
+    templateId: htK8H-7AKYF1NMVt1qeXjt7ThWP60b9GkBQWDKNCF5k
+    certPath: C:\\Users\\Administrator\\Desktop\\ciker\procert\\apiclient_cert.p12
+    sendRedPacketUrl:  https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack
+    wxOfficialAppId: wx3bd5aefa8786691d

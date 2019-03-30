@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.leoleo.film.dao.PriceDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.leoleo.film.entity.Price" id="priceMap">
+        <result property="id" column="id"/>
+        <result property="goodsid" column="goodsid"/>
+        <result property="price" column="price"/>
+    </resultMap>
+
+
+    <select id="getPriceByGoodsid" resultMap="priceMap">
+        SELECT *
+        from tb_price
+        where goodsid = #{goodsid}
+    </select>
+    <insert id="insertPrice" parameterType="com.leoleo.film.entity.Price">
+        insert into tb_price (goodsid,price) values (#{goodsid},#{price})
+    </insert>
+    <update id="updatePrice" parameterType="com.leoleo.film.entity.Price">
+        update tb_price set price =#{price} where goodsid=#{goodsid}
+    </update>
+    <select id="getPriceByPage" resultMap="priceMap">
+        SELECT * from tb_price limit   #{pageNo}, #{pageSize}
+    </select>
+</mapper>
