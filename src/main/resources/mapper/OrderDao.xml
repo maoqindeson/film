@@ -11,6 +11,8 @@
         <result property="goodsid" column="goodsid"/>
         <result property="price" column="price"/>
         <result property="numbers" column="numbers"/>
+        <result property="orderTime" column="order_time"/>
+        <result property="orderStatus" column="order_status"/>
     </resultMap>
 
 
@@ -20,7 +22,7 @@
         where orderid = #{orderid}
     </select>
     <insert id="insertOrder" parameterType="com.leoleo.film.entity.Order">
-        insert into tb_order (orderid,name,goodsid,price,numbers) values (#{orderid},#{name},#{goodsid},#{price},#{numbers})
+        insert into tb_order (orderid,name,goodsid,price,numbers,order_time,order_status) values (#{orderid},#{name},#{goodsid},#{price},#{numbers},#{orderTime},#{orderStatus})
     </insert>
     <select id="getOrderByPage" resultMap="orderMap">
         SELECT * from tb_order limit   #{pageNo}, #{pageSize}

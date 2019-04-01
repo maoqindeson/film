@@ -7,7 +7,9 @@ import com.leoleo.film.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -26,8 +28,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao,Order> implements Ord
     }
 
     @Override
-    public int insertOrder(String orderid, String name, String goodsid, BigDecimal price, int numbers) {
-        return baseMapper.insertOrder(orderid, name, goodsid,  price, numbers);
+    public int insertOrder(String orderid, String name, String goodsid, BigDecimal price, int numbers, Date orderTime, String orderStatus) {
+        return baseMapper.insertOrder(orderid, name, goodsid,  price, numbers,orderTime,orderStatus);
     }
 }
 

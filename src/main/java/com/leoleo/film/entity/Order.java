@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @TableName("tb_order")
 @Data
@@ -16,5 +17,6 @@ public class Order {
     private String goodsid;
     private BigDecimal price;
     private int numbers;
-
+    private Date orderTime;
+    private String orderStatus;
 }
