@@ -25,6 +25,8 @@ public class GoodsController {
         Goods goods = goodsService.getGoodsByGoodsid(goodsid);
         return goods;
     }
+
+
     @PostMapping("getGoodsByPage")
     public MaoqinObject getGoodsByPage(int pageNo,int pageSize){
         int start =(pageNo-1)*pageSize-pageSize;
