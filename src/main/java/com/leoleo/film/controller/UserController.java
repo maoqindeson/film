@@ -24,6 +24,7 @@ public class UserController {
     private UserService userService;
 
 
+
     @PostMapping("login")
     public Map<String, Object> login(String name, String password) throws Exception {
         User user = userService.getUserByName(name);  //得到用户详情
