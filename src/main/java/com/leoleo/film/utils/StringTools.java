@@ -12,6 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -927,5 +928,29 @@ public class StringTools {
             return phone;
         }
     }
+
+    public static String getTradeno() {
+        Random random = new Random();
+        int max = (int) Math.pow(10.0D, (double) 6);
+        String randomstr = padRight(String.valueOf(random.nextInt(max)), 6, '0');
+        SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmss" + randomstr);
+        Date now = new Date();
+        return sdf.format(now);
+    }
+
+    public static String padRight(String str, int size, char fill) {
+        if (str == null) {
+            str = "";
+        }
+        int str_size = str.length();
+        int pad_len = size - str_size;
+        StringBuffer retvalue = new StringBuffer();
+
+        for (int i = 0; i < pad_len; ++i) {
+            retvalue.append(fill);
+        }
+        return retvalue.insert(0, str).toString();
+    }
+
 
 }

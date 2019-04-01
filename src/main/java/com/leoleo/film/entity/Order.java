@@ -11,12 +11,12 @@ import java.util.Date;
 @Data
 public class Order {
     @TableId
-    private int id;
+    private Integer id;
     private String orderid;
     private String name;
     private String goodsid;
     private BigDecimal price;
-    private int numbers;
+    private Integer numbers;
     private Date orderTime;
     private String orderStatus;
 }
