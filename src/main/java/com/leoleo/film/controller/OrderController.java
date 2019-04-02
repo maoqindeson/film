@@ -118,36 +118,36 @@ public class OrderController {
     @PostMapping("creatOrder")
     @RequiresAuthentication
     public MaoqinObject creatOrder(String goodsid, Integer numbers, HttpServletRequest request) {
-        MaoqinObject maoqinObject = new MaoqinObject();
-        String username = JWTUtil.getCurrentUsername(request);
+        MaoqinObject maoqinObject = new MaoqinObject();   //新建自定义的对象来接受返回值
+        String username = JWTUtil.getCurrentUsername(request);  //通过请求解密用户名
         try {
-            if (StringTools.isNullOrEmpty(goodsid)) {
+            if (StringTools.isNullOrEmpty(goodsid)) {        //校验货号入参
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("商品id不能为空");
                 return maoqinObject;
             }
-            if (numbers == null || numbers == 0) {
+            if (numbers == null || numbers == 0) {              //校验商品数量入参
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("商品数量不能为空或是0");
                 return maoqinObject;
             }
-            Goods goods = goodsService.getGoodsByGoodsid(goodsid);
-            if (goods == null) {
+            Goods goods = goodsService.getGoodsByGoodsid(goodsid);    //新建商品查询的对象
+            if (goods == null) {                      //校验商品是否存在
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("商品不存在");
                 return maoqinObject;
             }
-            if (goods.getNumbers() < numbers) {
+            if (goods.getNumbers() < numbers) {              //校验商品数量是否够
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("商品数量不够");
             }
-            Price price = priceService.getPriceByGoodsid(goodsid);
-            if (price == null) {
+            Price price = priceService.getPriceByGoodsid(goodsid);   //新建商品价格查询的对象
+            if (price == null) {                        //校验商品价格是否存在
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("没有商品价格");
                 return maoqinObject;
             }
-            String orderid = StringTools.getTradeno();
+            String orderid = StringTools.getTradeno();       //生成货号
 //        Order order = new Order();
 //        order.setOrderid(orderid);
 //        order.setGoodsid(goodsid);
@@ -157,11 +157,11 @@ public class OrderController {
 //        order.setPrice(price.getPrice());
 //        order.setOrderTime(new Date());
             BigDecimal price1 = price.getPrice();
-            Date orderTime = new Date();
-            String orderStatus = "no pay";
-            int result = orderService.insertOrder
+            Date orderTime = new Date();           //生成下单时间
+            String orderStatus = "no pay";          //生成下单后的状态
+            int result = orderService.insertOrder     //下单插入
                     (orderid, username, goodsid, price1, numbers, orderTime, orderStatus);
-            if (result == 0) {
+            if (result == 0) {                     //校验下单是否成功
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("生成订单失败");
                 return maoqinObject;
@@ -169,13 +169,13 @@ public class OrderController {
             maoqinObject.setM(1);
             maoqinObject.setMessage("下单成功，尽快支付");
             maoqinObject.setObject(orderService.getOrderByOrderid(orderid));
-            return maoqinObject;
+            return maoqinObject;              //返回下单成功信息
         } catch (Exception e) {
             e.printStackTrace();
         }
         maoqinObject.setM(400);
         maoqinObject.setMessage("下单异常");
-        return maoqinObject;
+        return maoqinObject;        //下单有try catch来捕获异常，所以这里就是下单不成功，需要返回信息
     }
 
 //    @PostMapping("createOrder")
