@@ -112,6 +112,7 @@ public class OrderController {
 
     @PostMapping("payOrder")
     @RequiresAuthentication
+    @Transactional(rollbackFor = Exception.class)
     public synchronized MaoqinObject payOrder(String orderid, HttpServletRequest request) {
         MaoqinObject maoqinObject = new MaoqinObject();
         String username = JWTUtil.getCurrentUsername(request);
@@ -124,6 +125,11 @@ public class OrderController {
             }
             Order order = orderService.getOrderByOrderid(orderid);
             //TODO 这里缺少校验订单是否存在,万一是一个假的订单号,这里查到的order对象会是空的
+            if(order==null){
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("没有未支付的订单");
+                return maoqinObject;
+            }
             User user = userService.getUserByName(username);
             Goods goods = goodsService.getGoodsByGoodsid(order.getGoodsid());
             BigDecimal total = order.getPrice().multiply(new BigDecimal(order.getNumbers()));
@@ -155,15 +161,15 @@ public class OrderController {
             if (nuResult == 0) {
                 //TODO 这里当更新商品数量失败之后,将用户余额回退,思路是ok的,有更好的写法,比如使用事务回滚,
                 // TODO 可以参照上面 buy接口,使用@Transactional(rollbackFor = Exception.class)实现
-                userService.updateBalance(username, user.getBalance());
+//                userService.updateBalance(username, user.getBalance());
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("支付失败，请重试");
                 return maoqinObject;
             }
             Integer paresult = orderService.updateOrder(orderid, "pay");
             if (paresult == 0) {
-                goodsService.updateGoods(goods.getGoodsid(), goods.getNumbers());
-                userService.updateBalance(username, user.getBalance());
+//                goodsService.updateGoods(goods.getGoodsid(), goods.getNumbers());
+//                userService.updateBalance(username, user.getBalance());
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("支付失败，请重试");
                 return maoqinObject;
@@ -180,9 +186,9 @@ public class OrderController {
         return maoqinObject;
     }
 
-    @PostMapping("creatOrder")
+    @PostMapping("newCreatOrder")
     @RequiresAuthentication
-    public synchronized MaoqinObject creatOrder(String goodsid, Integer numbers, HttpServletRequest request) {
+    public synchronized MaoqinObject newCreatOrder(String goodsid, Integer numbers, HttpServletRequest request) {
         MaoqinObject maoqinObject = new MaoqinObject();   //新建自定义的对象来接受返回值
         String username = JWTUtil.getCurrentUsername(request);  //通过请求解密用户名
         try {
