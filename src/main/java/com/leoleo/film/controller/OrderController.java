@@ -153,7 +153,8 @@ public class OrderController {
             Integer nu = goods.getNumbers() - order.getNumbers();
             Integer nuResult = goodsService.updateGoods(goods.getGoodsid(), nu);
             if (nuResult == 0) {
-                //TODO 这里当更新商品数量失败之后,将用户余额回退,思路是ok的,有更好的写法,比如使用事务回滚
+                //TODO 这里当更新商品数量失败之后,将用户余额回退,思路是ok的,有更好的写法,比如使用事务回滚,
+                // TODO 可以参照上面 buy接口,使用@Transactional(rollbackFor = Exception.class)实现
                 userService.updateBalance(username, user.getBalance());
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("支付失败，请重试");
