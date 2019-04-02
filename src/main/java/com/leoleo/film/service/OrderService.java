@@ -2,6 +2,7 @@ package com.leoleo.film.service;
 
 import com.baomidou.mybatisplus.service.IService;
 import com.leoleo.film.entity.Order;
+import com.leoleo.film.utils.OrderGoodsName;
 
 import javax.xml.crypto.Data;
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ public interface OrderService extends IService<Order> {
     Order getOrderByOrderid(String orderid);
 
     List<Order> getOrderByPage(Integer pageNo, Integer pageSize);
+    List<OrderGoodsName> getOrderGoodsNameByOrderid(String orderid);
 
     int insertOrder(String orderid, String name, String goodsid, BigDecimal price, Integer numbers, Date orderTime, String orderStatus);
     int updateOrder(String orderid,String orderStatus);

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.leoleo.film.dao.OrderDao;
 import com.leoleo.film.entity.Order;
 import com.leoleo.film.service.OrderService;
+import com.leoleo.film.utils.OrderGoodsName;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
     @Override
     public List<Order> getOrderByPage(Integer pageNo, Integer pageSize) {
         return baseMapper.getOrderByPage(pageNo, pageSize);
+    }
+
+    @Override
+    public List<OrderGoodsName> getOrderGoodsNameByOrderid(String orderid) {
+        return baseMapper.getOrderGoodsNameByOrderid(orderid);
     }
 
     @Override

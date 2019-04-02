@@ -19,6 +19,7 @@ import com.leoleo.film.service.PriceService;
 import com.leoleo.film.service.UserService;
 import com.leoleo.film.utils.JWTUtil;
 import com.leoleo.film.utils.MaoqinObject;
+import com.leoleo.film.utils.OrderGoodsName;
 import com.leoleo.film.utils.StringTools;
 import jdk.nashorn.internal.ir.RuntimeNode;
 import lombok.extern.slf4j.Slf4j;
@@ -103,6 +104,11 @@ public class OrderController {
         maoqinObject.setMessage("sucess");
         maoqinObject.setObject(list);
         return maoqinObject;
+    }
+    @PostMapping("getOrderGoodsNameByOrderid")
+    public List<OrderGoodsName> getOrderGoodsNameByOrderid(String orderid){
+        List<OrderGoodsName> list = orderService.getOrderGoodsNameByOrderid(orderid);
+        return list;
     }
 
     @PostMapping("insertOrder")

@@ -2,6 +2,7 @@ package com.leoleo.film.dao;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.leoleo.film.entity.Order;
+import com.leoleo.film.utils.OrderGoodsName;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public interface OrderDao extends BaseMapper<Order> {
     Order getOrderByOrderid(String orderid);
     List<Order> getOrderByPage(@Param("pageNo")Integer pageNo, @Param("pageSize")Integer pageSize);
+    List<OrderGoodsName> getOrderGoodsNameByOrderid(String orderid);
     int insertOrder(@Param("orderid")String orderid,
                     @Param("name")String name, @Param("goodsid")String goodsid,
                     @Param("price") BigDecimal price, @Param("numbers")Integer numbers

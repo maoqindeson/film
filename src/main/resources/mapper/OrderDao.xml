@@ -21,6 +21,12 @@
         from tb_order
         where orderid = #{orderid}
     </select>
+    <select id="getOrderGoodsNameByOrderid" resultMap="orderMap">
+        SELECT o.orderid,o.name,o.goodsid,g.goods_name,
+        o.price,o.numbers,o.order_time,o.order_status
+        from tb_order as o inner join tb_goods as g on o.goodsid = g.goodsid
+        where orderid = #{orderid}
+    </select>
     <insert id="insertOrder" parameterType="com.leoleo.film.entity.Order">
         insert into tb_order (orderid,name,goodsid,price,numbers,order_time,order_status) values (#{orderid},#{name},#{goodsid},#{price},#{numbers},#{orderTime},#{orderStatus})
     </insert>
