@@ -179,7 +179,7 @@ public class OrderController {
 
     @PostMapping("creatOrder")
     @RequiresAuthentication
-    public MaoqinObject creatOrder(String goodsid, Integer numbers, HttpServletRequest request) {
+    public synchronized MaoqinObject creatOrder(String goodsid, Integer numbers, HttpServletRequest request) {
         MaoqinObject maoqinObject = new MaoqinObject();   //新建自定义的对象来接受返回值
         String username = JWTUtil.getCurrentUsername(request);  //通过请求解密用户名
         try {
