@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @Service("orderService")
-public class OrderServiceImpl extends ServiceImpl<OrderDao,Order> implements OrderService {
+public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements OrderService {
 
 
     @Override
@@ -23,13 +23,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao,Order> implements Ord
     }
 
     @Override
-    public List<Order> getOrderByPage(int pageNo, int pageSize) {
-        return baseMapper.getOrderByPage(pageNo,pageSize);
+    public List<Order> getOrderByPage(Integer pageNo, Integer pageSize) {
+        return baseMapper.getOrderByPage(pageNo, pageSize);
     }
 
     @Override
-    public int insertOrder(String orderid, String name, String goodsid, BigDecimal price, int numbers, Date orderTime, String orderStatus) {
-        return baseMapper.insertOrder(orderid, name, goodsid,  price, numbers,orderTime,orderStatus);
+    public int insertOrder(String orderid, String name, String goodsid, BigDecimal price, Integer numbers, Date orderTime, String orderStatus) {
+        return baseMapper.insertOrder(orderid, name, goodsid, price, numbers, orderTime, orderStatus);
+    }
+
+    @Override
+    public int updateOrder(String orderid, String orderStatus) {
+        return baseMapper.updateOrder(orderid, orderStatus);
     }
 }
 

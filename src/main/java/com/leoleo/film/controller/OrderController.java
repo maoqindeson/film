@@ -20,10 +20,12 @@ import com.leoleo.film.service.UserService;
 import com.leoleo.film.utils.JWTUtil;
 import com.leoleo.film.utils.MaoqinObject;
 import com.leoleo.film.utils.StringTools;
+import jdk.nashorn.internal.ir.RuntimeNode;
 import lombok.extern.slf4j.Slf4j;
 //import org.apache.shiro.authz.annotation.RequiresAuthentication;
 //import org.assertj.core.api.BigDecimalAssert;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.omg.CORBA.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -93,7 +95,7 @@ public class OrderController {
     }
 
     @PostMapping("getOrderByPage")
-    public MaoqinObject getOrderByPage(int pageNo, int pageSize) {
+    public MaoqinObject getOrderByPage(Integer pageNo, Integer pageSize) {
         int start = (pageNo - 1) * pageSize - pageSize;
         List<Order> list = orderService.getOrderByPage(start, pageSize);
         MaoqinObject maoqinObject = new MaoqinObject();
@@ -104,73 +106,141 @@ public class OrderController {
     }
 
     @PostMapping("insertOrder")
-    public int insertOrder(String orderid, String name, String goodsid, BigDecimal price, int numbers, Date orderTime, String orderStatus) {
+    public int insertOrder(String orderid, String name, String goodsid, BigDecimal price, Integer numbers, Date orderTime, String orderStatus) {
         return orderService.insertOrder(orderid, name, goodsid, price, numbers, orderTime, orderStatus);
     }
 
-    @PostMapping("createOrder")
+    @PostMapping("updateOrder")
+    public int updateOrder(String orderid, String orderStatus) {
+        return orderService.updateOrder(orderid, orderStatus);
+    }
+
+    @PostMapping("creatOrder")
     @RequiresAuthentication
-    public MaoqinObject createOrder(HttpServletRequest request, String goodsid, Integer numbers) {
+    public MaoqinObject creatOrder(String goodsid, Integer numbers, HttpServletRequest request) {
         MaoqinObject maoqinObject = new MaoqinObject();
-        //使用try catch 如果有异常则返回有异常
+        String username = JWTUtil.getCurrentUsername(request);
         try {
-            String username = JWTUtil.getCurrentUsername(request);
-            //先进行入参校验,如果是空则直接打回
             if (StringTools.isNullOrEmpty(goodsid)) {
-                maoqinObject.setM(500);
+                maoqinObject.setM(400);
                 maoqinObject.setMessage("商品id不能为空");
                 return maoqinObject;
             }
             if (numbers == null || numbers == 0) {
-                maoqinObject.setM(500);
-                maoqinObject.setMessage("商品数量不能为空");
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("商品数量不能为空或是0");
                 return maoqinObject;
             }
-            //校验商品id是否在数据库中能找到商品,如果不能则直接打回
-            Goods goods = goodsService.selectById(goodsid);
-            if (null == goods) {
-                maoqinObject.setM(500);
-                maoqinObject.setMessage("找不到对应的商品");
+            Goods goods = goodsService.getGoodsByGoodsid(goodsid);
+            if (goods == null) {
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("商品不存在");
                 return maoqinObject;
             }
-            //查询商品的价格,如果找不到价格直接打回
-            Price price = priceService.selectOne(new EntityWrapper<Price>().eq("goodsid", goodsid));
-            if (null == price) {
-                maoqinObject.setM(500);
-                maoqinObject.setMessage("找不到商品对应的价格");
+            if (goods.getNumbers() < numbers) {
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("商品数量不够");
+            }
+            Price price = priceService.getPriceByGoodsid(goodsid);
+            if (price == null) {
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("没有商品价格");
                 return maoqinObject;
             }
-            //初始化一个订单对象
-            Order order = new Order();
-            //使用工具类生成订单号
-            String orderId = StringTools.getTradeno();
-            //计算总价,总价=商品单价*数量
-            BigDecimal totalPrice = new BigDecimal(numbers).multiply(price.getPrice());
-            //给订单对象设值
-            order.setOrderid(orderId);
-            order.setGoodsid(goodsid);
-            order.setName(username);
-            order.setPrice(totalPrice);
-            order.setOrderTime(new Date());
-            order.setOrderStatus("待支付");
-            order.setNumbers(numbers);
-            //将订单对象插入数据库,判断插入结果
-            boolean result = orderService.insert(order);
-            if (!result) {
-                maoqinObject.setM(500);
-                maoqinObject.setMessage("生成订单失败,请重试");
+            String orderid = StringTools.getTradeno();
+//        Order order = new Order();
+//        order.setOrderid(orderid);
+//        order.setGoodsid(goodsid);
+//        order.setName(username);
+//        order.setOrderStatus("no pay");
+//        order.setNumbers(numbers);
+//        order.setPrice(price.getPrice());
+//        order.setOrderTime(new Date());
+            BigDecimal price1 = price.getPrice();
+            Date orderTime = new Date();
+            String orderStatus = "no pay";
+            int result = orderService.insertOrder
+                    (orderid, username, goodsid, price1, numbers, orderTime, orderStatus);
+            if (result == 0) {
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("生成订单失败");
                 return maoqinObject;
             }
-            maoqinObject.setM(200);
-            maoqinObject.setMessage("下单成功");
-            maoqinObject.setObject(order.getId());
+            maoqinObject.setM(1);
+            maoqinObject.setMessage("下单成功，尽快支付");
+            maoqinObject.setObject(orderService.getOrderByOrderid(orderid));
             return maoqinObject;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        maoqinObject.setM(500);
+        maoqinObject.setM(400);
         maoqinObject.setMessage("下单异常");
         return maoqinObject;
     }
 
+//    @PostMapping("createOrder")
+//    @RequiresAuthentication
+//    public MaoqinObject createOrder(HttpServletRequest request, String goodsid, Integer numbers) {
+//        MaoqinObject maoqinObject = new MaoqinObject();
+//        //使用try catch 如果有异常则返回有异常
+//        try {
+//            String username = JWTUtil.getCurrentUsername(request);
+//            //先进行入参校验,如果是空则直接打回
+//            if (StringTools.isNullOrEmpty(goodsid)) {
+//                maoqinObject.setM(500);
+//                maoqinObject.setMessage("商品id不能为空");
+//                return maoqinObject;
+//            }
+//            if (numbers == null || numbers == 0) {
+//                maoqinObject.setM(500);
+//                maoqinObject.setMessage("商品数量不能为空");
+//                return maoqinObject;
+//            }
+//            //校验商品id是否在数据库中能找到商品,如果不能则直接打回
+//            Goods goods = goodsService.selectById(goodsid);
+//            if (null == goods) {
+//                maoqinObject.setM(500);
+//                maoqinObject.setMessage("找不到对应的商品");
+//                return maoqinObject;
+//            }
+//            //查询商品的价格,如果找不到价格直接打回
+//            Price price = priceService.selectOne(new EntityWrapper<Price>().eq("goodsid", goodsid));
+//            if (null == price) {
+//                maoqinObject.setM(500);
+//                maoqinObject.setMessage("找不到商品对应的价格");
+//                return maoqinObject;
+//            }
+//            //初始化一个订单对象
+//            Order order = new Order();
+//            //使用工具类生成订单号
+//            String orderId = StringTools.getTradeno();
+//            //计算总价,总价=商品单价*数量
+//            BigDecimal totalPrice = new BigDecimal(numbers).multiply(price.getPrice());
+//            //给订单对象设值
+//            order.setOrderid(orderId);
+//            order.setGoodsid(goodsid);
+//            order.setName(username);
+//            order.setPrice(totalPrice);
+//            order.setOrderTime(new Date());
+//            order.setOrderStatus("待支付");
+//            order.setNumbers(numbers);
+//            //将订单对象插入数据库,判断插入结果
+//            boolean result = orderService.insert(order);
+//            if (!result) {
+//                maoqinObject.setM(500);
+//                maoqinObject.setMessage("生成订单失败,请重试");
+//                return maoqinObject;
+//            }
+//            maoqinObject.setM(200);
+//            maoqinObject.setMessage("下单成功");
+//            maoqinObject.setObject(order.getId());
+//            return maoqinObject;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        maoqinObject.setM(500);
+//        maoqinObject.setMessage("下单异常");
+//        return maoqinObject;
+//    }
+//
 }

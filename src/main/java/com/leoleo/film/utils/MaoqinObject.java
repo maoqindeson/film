@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class MaoqinObject {
-    private int m;
+    private Integer m;
     private String message;
     private Object object;
 
@@ -38,7 +38,7 @@ public class MaoqinObject {
 //    }
 
 
-    public static MaoqinObject ok(int m){
+    public static MaoqinObject ok(Integer m){
     MaoqinObject maoqinObject =new MaoqinObject();
     return maoqinObject;
     }

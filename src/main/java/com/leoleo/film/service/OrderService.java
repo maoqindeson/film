@@ -11,7 +11,9 @@ import java.util.List;
 public interface OrderService extends IService<Order> {
     Order getOrderByOrderid(String orderid);
 
-    List<Order> getOrderByPage(int pageNo, int pageSize);
+    List<Order> getOrderByPage(Integer pageNo, Integer pageSize);
 
-    int insertOrder(String orderid, String name, String goodsid, BigDecimal price, int numbers, Date orderTime, String orderStatus);
+    int insertOrder(String orderid, String name, String goodsid, BigDecimal price, Integer numbers, Date orderTime, String orderStatus);
+    int updateOrder(String orderid,String orderStatus);
+
 }
