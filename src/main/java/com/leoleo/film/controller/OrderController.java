@@ -123,6 +123,7 @@ public class OrderController {
                 return maoqinObject;
             }
             Order order = orderService.getOrderByOrderid(orderid);
+            //TODO 这里缺少校验订单是否存在,万一是一个假的订单号,这里查到的order对象会是空的
             User user = userService.getUserByName(username);
             Goods goods = goodsService.getGoodsByGoodsid(order.getGoodsid());
             BigDecimal total = order.getPrice().multiply(new BigDecimal(order.getNumbers()));
@@ -152,6 +153,7 @@ public class OrderController {
             Integer nu = goods.getNumbers() - order.getNumbers();
             Integer nuResult = goodsService.updateGoods(goods.getGoodsid(), nu);
             if (nuResult == 0) {
+                //TODO 这里当更新商品数量失败之后,将用户余额回退,思路是ok的,有更好的写法,比如使用事务回滚
                 userService.updateBalance(username, user.getBalance());
                 maoqinObject.setM(400);
                 maoqinObject.setMessage("支付失败，请重试");
