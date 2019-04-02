@@ -10,6 +10,7 @@ import com.leoleo.film.entity.Order;
 //import com.leoleo.film.entity.User;
 //import com.leoleo.film.service.GoodsService;
 import com.leoleo.film.entity.Price;
+import com.leoleo.film.entity.User;
 import com.leoleo.film.service.GoodsService;
 import com.leoleo.film.service.OrderService;
 //import com.leoleo.film.service.PriceService;
@@ -105,8 +106,9 @@ public class OrderController {
         maoqinObject.setObject(list);
         return maoqinObject;
     }
+
     @PostMapping("getOrderGoodsNameByOrderid")
-    public List<OrderGoodsName> getOrderGoodsNameByOrderid(String orderid){
+    public List<OrderGoodsName> getOrderGoodsNameByOrderid(String orderid) {
         List<OrderGoodsName> list = orderService.getOrderGoodsNameByOrderid(orderid);
         return list;
     }
@@ -119,6 +121,73 @@ public class OrderController {
     @PostMapping("updateOrder")
     public int updateOrder(String orderid, String orderStatus) {
         return orderService.updateOrder(orderid, orderStatus);
+    }
+
+    @PostMapping("payOrder")
+    @RequiresAuthentication
+    public synchronized MaoqinObject payOrder(String orderid, HttpServletRequest request) {
+        MaoqinObject maoqinObject = new MaoqinObject();
+        String username = JWTUtil.getCurrentUsername(request);
+        try {
+            //校验入参
+            if (StringTools.isNullOrEmpty(orderid)) {
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("需要有订单号");
+                return maoqinObject;
+            }
+            Order order = orderService.getOrderByOrderid(orderid);
+            User user = userService.getUserByName(username);
+            Goods goods = goodsService.getGoodsByGoodsid(order.getGoodsid());
+            BigDecimal total = order.getPrice().multiply(new BigDecimal(order.getNumbers()));
+            if (order.getOrderStatus().equals("pay")) {
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("已支付的订单，不用重新支付");
+                return maoqinObject;
+            }
+            if (user.getBalance().compareTo(total) < 0) {
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("余额不足，请充值");
+                return maoqinObject;
+            }
+            if (goods.getNumbers() < order.getNumbers()) {
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("目前商品数量不足");
+                return maoqinObject;
+            }
+
+            BigDecimal balance = user.getBalance().subtract(total);
+            Integer blResult = userService.updateBalance(username, balance);
+            if (blResult == 0) {
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("支付失败，请重试");
+                return maoqinObject;
+            }
+            Integer nu = goods.getNumbers() - order.getNumbers();
+            Integer nuResult = goodsService.updateGoods(goods.getGoodsid(), nu);
+            if (nuResult == 0) {
+                userService.updateBalance(username, user.getBalance());
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("支付失败，请重试");
+                return maoqinObject;
+            }
+            Integer paresult = orderService.updateOrder(orderid, "pay");
+            if (paresult == 0) {
+                goodsService.updateGoods(goods.getGoodsid(), goods.getNumbers());
+                userService.updateBalance(username, user.getBalance());
+                maoqinObject.setM(400);
+                maoqinObject.setMessage("支付失败，请重试");
+                return maoqinObject;
+            }
+            maoqinObject.setM(1);
+            maoqinObject.setMessage("支付成功，谢谢惠顾");
+            maoqinObject.setObject(orderService.getOrderGoodsNameByOrderid(orderid));
+            return maoqinObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        maoqinObject.setM(400);
+        maoqinObject.setMessage("支付失败，请重试");
+        return maoqinObject;
     }
 
     @PostMapping("creatOrder")
@@ -174,7 +243,7 @@ public class OrderController {
             }
             maoqinObject.setM(1);
             maoqinObject.setMessage("下单成功，尽快支付");
-            maoqinObject.setObject(orderService.getOrderByOrderid(orderid));
+            maoqinObject.setObject(orderService.getOrderGoodsNameByOrderid(orderid));
             return maoqinObject;              //返回下单成功信息
         } catch (Exception e) {
             e.printStackTrace();
