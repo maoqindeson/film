@@ -26,7 +26,7 @@ public class FilmTask {
             for (GroupBuy groupBuy : list) {
                 //应该轮询所有团购记录,而不是只看id为1的
 //                GroupBuy groupBuy = groupBuyService.getGroupBuyById(1);
-                Date creatDate = groupBuy.getCreatedDate();
+//                Date creatDate = groupBuy.getCreatedDate();
                 Date endDate = groupBuy.getEndDate();
 //                if (groupBuy.getCreatedDate().compareTo(new Date()) == 0) {
 //                    groupBuyService.updateGroupBuyStatus(1, 1);
@@ -53,9 +53,6 @@ public class FilmTask {
                     if (num>groupBuy.getMiniNum()){
                         log.warn("团购成功,id为 : "+groupBuy.getId());
                         groupBuy.setStatus(3);
-                    }else {
-                        log.warn("团购失败,id为 : "+groupBuy.getId());
-                        groupBuy.setStatus(4);
                     }
                     groupBuy.setUpdatedDate(new Date());
                     boolean result = groupBuyService.updateById(groupBuy);
