@@ -150,7 +150,7 @@ public class GroupBuyController {
             }
             Goods goods = goodsService.getGoodsByGoodsid(groupBuy.getProductId());
             Integer nums = goods.getNumbers() - order.getNumbers();
-            Integer nuResult = goodsService.updateGoods(goods.getGoodsid(), nu);
+            Integer nuResult = goodsService.updateGoods(goods.getGoodsid(), nums);
             if (nuResult == 0) {
                 log.error("更新库存失败，执行回滚");
                 throw new RuntimeException();
