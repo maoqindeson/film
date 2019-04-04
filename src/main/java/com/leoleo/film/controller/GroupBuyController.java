@@ -156,10 +156,11 @@ public class GroupBuyController {
                 log.error("更新订单状态失败，执行回滚");
                 throw new RuntimeException();
             }
+            return MaoqinObject.ok(500, "团购成功,等待结果");
         }catch (Exception e){
             e.printStackTrace();
         }
-        return MaoqinObject.ok(500, "团购成功,等待结果");
+        return MaoqinObject.ok(500, "团购失败");
     }
 
     @PostMapping("/countGroupBuyNumbers")
