@@ -115,7 +115,8 @@ public class GroupBuyController {
             Date endDate = groupBuy.getEndDate();
             Integer groupBuyID = groupBuy.getId();
             Integer num = groupBuyService.countGroupBuyNumbers(createdDate, endDate, groupBuyID);  //查询已售出的团购商品数量
-            if (num + numbers > groupBuy.getMiniNum()) {
+            Integer nu =num+numbers;
+            if (nu > groupBuy.getMiniNum()) {
                 return MaoqinObject.error("团购失败，货不够");
             }
             Order order = new Order();
@@ -145,7 +146,7 @@ public class GroupBuyController {
                 return MaoqinObject.error("支付失败，请重试");
             }
             Goods goods = goodsService.getGoodsByGoodsid(groupBuy.getProductId());
-            Integer nu = goods.getNumbers() - order.getNumbers();
+            Integer nums = goods.getNumbers() - order.getNumbers();
             Integer nuResult = goodsService.updateGoods(goods.getGoodsid(), nu);
             if (nuResult == 0) {
                 log.error("更新库存失败，执行回滚");
