@@ -13,6 +13,7 @@ public class Order {
     @TableId
     private Integer id;
     private String orderid;
+    private Integer groupBuyId;
     private String name;
     private String goodsid;
     private BigDecimal price;

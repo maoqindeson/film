@@ -22,29 +22,29 @@ public class GoodsController {
 
 
 
-    @PostMapping("getGoodsByGoodsid")
-    public Goods getGoodsByGoodsid(String goodsid) {
-        Goods goods = goodsService.getGoodsByGoodsid(goodsid);
-        return goods;
-    }
-
-
-    @PostMapping("getGoodsByPage")
-    public MaoqinObject getGoodsByPage(int pageNo,int pageSize){
-        int start =(pageNo-1)*pageSize-pageSize;
-        List<Goods>list = goodsService.getGoodsByPage(start,pageSize);
-        MaoqinObject maoqinObject=new MaoqinObject();
-        maoqinObject.setM(1);
-        maoqinObject.setMessage("sucess");
-        maoqinObject.setObject(list);
-        return maoqinObject;
-    }
-    @PostMapping("insertGoods")
-    public int insertGoods(String goodsid,String goodsName,int numbers){
-        return goodsService.insertGoods(goodsid,goodsName,numbers);
-    }
-    @PostMapping("updateGoods")
-    public int updateGoods(String goodsid,int numbers){
-        return goodsService.updateGoods(goodsid,numbers);
-    }
+//    @PostMapping("/getGoodsByGoodsid")
+//    public Goods getGoodsByGoodsid(String goodsid) {
+//        Goods goods = goodsService.getGoodsByGoodsid(goodsid);
+//        return goods;
+//    }
+//
+//
+//    @PostMapping("/getGoodsByPage")
+//    public MaoqinObject getGoodsByPage(int pageNo,int pageSize){
+//        int start =(pageNo-1)*pageSize-pageSize;
+//        List<Goods>list = goodsService.getGoodsByPage(start,pageSize);
+//        MaoqinObject maoqinObject=new MaoqinObject();
+//        maoqinObject.setM(1);
+//        maoqinObject.setMessage("sucess");
+//        maoqinObject.setObject(list);
+//        return maoqinObject;
+//    }
+//    @PostMapping("/insertGoods")
+//    public int insertGoods(String goodsid,String goodsName,int numbers){
+//        return goodsService.insertGoods(goodsid,goodsName,numbers);
+//    }
+//    @PostMapping("/updateGoods")
+//    public int updateGoods(String goodsid,int numbers){
+//        return goodsService.updateGoods(goodsid,numbers);
+//    }
 }

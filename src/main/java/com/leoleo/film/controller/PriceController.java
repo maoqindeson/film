@@ -19,30 +19,30 @@ public class PriceController {
     @Autowired
     private PriceService priceService;
 
-    @PostMapping("getPriceByGoodsid")
-    public Price getPriceByGoodsid(String goodsid){
-        Price price=  priceService.getPriceByGoodsid(goodsid);
-        return price;
-    }
-
-    @PostMapping("getPriceByPage")
-    public MaoqinObject getPriceByPage(int pageNo,int pageSize){
-        int start =(pageNo-1)*pageSize-pageSize;
-        List<Price>list = priceService.getPriceByPage(start,pageSize);
-        MaoqinObject maoqinObject=new MaoqinObject();
-        maoqinObject.setM(1);
-        maoqinObject.setMessage("sucess");
-        maoqinObject.setObject(list);
-        return maoqinObject;
-    }
-
-    @PostMapping("insertPrice")
-    public int insertPrice(String goodsid, BigDecimal price){
-        return priceService.insertPrice(goodsid,price);
-    }
-
-    @PostMapping("updatePrice")
-    public int updatePrice(String goodsid,BigDecimal price){
-        return priceService.updatePrice(goodsid,price);
-    }
+//    @PostMapping("/getPriceByGoodsid")
+//    public Price getPriceByGoodsid(String goodsid){
+//        Price price=  priceService.getPriceByGoodsid(goodsid);
+//        return price;
+//    }
+//
+//    @PostMapping("/getPriceByPage")
+//    public MaoqinObject getPriceByPage(int pageNo,int pageSize){
+//        int start =(pageNo-1)*pageSize-pageSize;
+//        List<Price>list = priceService.getPriceByPage(start,pageSize);
+//        MaoqinObject maoqinObject=new MaoqinObject();
+//        maoqinObject.setM(1);
+//        maoqinObject.setMessage("sucess");
+//        maoqinObject.setObject(list);
+//        return maoqinObject;
+//    }
+//
+//    @PostMapping("/insertPrice")
+//    public int insertPrice(String goodsid, BigDecimal price){
+//        return priceService.insertPrice(goodsid,price);
+//    }
+//
+//    @PostMapping("/updatePrice")
+//    public int updatePrice(String goodsid,BigDecimal price){
+//        return priceService.updatePrice(goodsid,price);
+//    }
 }

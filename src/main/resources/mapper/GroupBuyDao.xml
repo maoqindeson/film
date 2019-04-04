@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.leoleo.film.dao.GroupBuyDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.leoleo.film.entity.GroupBuy" id="groupBuyMap">
+        <result property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="price" column="price"/>
+        <result property="miniNum" column="mini_num"/>
+        <result property="status" column="status"/>
+        <result property="endDate" column="end_date"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="updatedDate" column="updated_date"/>
+    </resultMap>
+
+
+    <select id="getGroupBuyById" resultMap="groupBuyMap">
+        SELECT *
+        from tb_group_buy
+        where id = #{id}
+    </select>
+    <insert id="insertGroupBuy" parameterType="com.leoleo.film.entity.GroupBuy">
+        insert into tb_group_buy (product_id,price,mini_num,status,end_date,created_date,updated_date)
+        values (#{productId},#{price},#{miniNum},#{status},#{endDate},#{createdDate},#{updatedDate})
+    </insert>
+    <update id="updateGroupBuyStatus" parameterType="com.leoleo.film.entity.GroupBuy">
+        update tb_group_buy set status = #{status} where id = #{id}
+    </update>
+    <update id="updateGroupBuyUpdatedDate" parameterType="com.leoleo.film.entity.GroupBuy">
+        update tb_group_buy set updated_date = #{updatedDate} where id = #{id}
+    </update>
+
+    <select id="countGroupBuyNumbers" resultType="java.lang.Integer">
+        SELECT
+        sum(numbers)
+        FROM
+        tb_order
+        WHERE order_time &lt;#{endDate}
+        AND  order_time &gt;#{createdDate}
+        AND group_buy_id = ${groupBuyId}
+        AND order_status = 'pay'
+    </select>
+
+</mapper>

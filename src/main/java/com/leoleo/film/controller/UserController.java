@@ -25,7 +25,7 @@ public class UserController {
 
 
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public Map<String, Object> login(String name, String password) throws Exception {
         User user = userService.getUserByName(name);  //得到用户详情
         if (StringTools.isNullOrEmpty(user.getName())) {
@@ -41,32 +41,32 @@ public class UserController {
         }
     }
 
-    @PostMapping("getUserByName")
-    public User getUserByName(String name) {
-        User user = userService.getUserByName(name);
-        return user;
-    }
-
-    @PostMapping("getUserByPage")
-    public MaoqinObject getUserByPage(int pageNo, int pageSize) {
-        int start = (pageNo-1)* pageSize;
-        List<User> list = userService.getUserByPage(start, pageSize);
-        MaoqinObject maoqinObject = new MaoqinObject();
-        maoqinObject.setMessage("success");
-        maoqinObject.setObject(list);
-        return maoqinObject;
-    }
-
-    @PostMapping("insertUser")
-//    @RequestMapping("insertUser")
-    public int insertUser(String name, String password, String role) {
-        return userService.insertUser(name, password, role);
-    }
-
-    @PostMapping("updateUser")
-    public int updateUser(String name, String password) {
-        return userService.updateUser(name, password);
-    }
+//    @PostMapping("/getUserByName")
+//    public User getUserByName(String name) {
+//        User user = userService.getUserByName(name);
+//        return user;
+//    }
+//
+//    @PostMapping("/getUserByPage")
+//    public MaoqinObject getUserByPage(int pageNo, int pageSize) {
+//        int start = (pageNo-1)* pageSize;
+//        List<User> list = userService.getUserByPage(start, pageSize);
+//        MaoqinObject maoqinObject = new MaoqinObject();
+//        maoqinObject.setMessage("success");
+//        maoqinObject.setObject(list);
+//        return maoqinObject;
+//    }
+//
+//    @PostMapping("/insertUser")
+////    @RequestMapping("insertUser")
+//    public int insertUser(String name, String password, String role) {
+//        return userService.insertUser(name, password, role);
+//    }
+//
+//    @PostMapping("/updateUser")
+//    public int updateUser(String name, String password) {
+//        return userService.updateUser(name, password);
+//    }
 
 }
 

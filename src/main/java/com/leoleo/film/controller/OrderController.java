@@ -61,14 +61,12 @@ public class OrderController {
             int updateResult = userService.updateBalance(name, balance);
             if (0 == updateResult) {                                                            //需要判断movieUserService.insertMovieUser结果是否成功，成功了才给用户更新余额userService.updateBalance
                 return MaoqinObject.error("减余额失败，请重试");
-
             }
             if (updateResult > 1) {
                 throw new Exception();
             }
             if (go.getNumbers() < numbers) {
                 return MaoqinObject.error("库存不足");
-
             }
             int num = go.getNumbers() - numbers;
             goodsService.updateGoods(goodsid, num);
@@ -77,39 +75,40 @@ public class OrderController {
         }
     }
 
-    @PostMapping("getOrderByOrderid")
-    public Order getOrderByOrderid(String orderid) {
-        Order order = orderService.getOrderByOrderid(orderid);
-        return order;
-    }
-
-    @PostMapping("getOrderByPage")
-    public MaoqinObject getOrderByPage(Integer pageNo, Integer pageSize) {
-        int start = (pageNo - 1) * pageSize - pageSize;
-        List<Order> list = orderService.getOrderByPage(start, pageSize);
-        return MaoqinObject.ok(200, "sucess", list);
-    }
-
-    @PostMapping("getOrderGoodsNameByOrderid")
-    public List<OrderGoodsName> getOrderGoodsNameByOrderid(String orderid) {
-        List<OrderGoodsName> list = orderService.getOrderGoodsNameByOrderid(orderid);
-        return list;
-    }
-
-    @PostMapping("insertOrder")
-    public int insertOrder(String orderid, String name, String goodsid, BigDecimal price, Integer numbers, Date orderTime, String orderStatus) {
-        return orderService.insertOrder(orderid, name, goodsid, price, numbers, orderTime, orderStatus);
-    }
-
-    @PostMapping("updateOrder")
-    public int updateOrder(String orderid, String orderStatus) {
-        return orderService.updateOrder(orderid, orderStatus);
-    }
+//    @PostMapping("/getOrderByOrderid")
+//    public Order getOrderByOrderid(String orderid) {
+//        Order order = orderService.getOrderByOrderid(orderid);
+//        return order;
+//    }
+//
+//    @PostMapping("/getOrderByPage")
+//    public MaoqinObject getOrderByPage(Integer pageNo, Integer pageSize) {
+//        int start = (pageNo - 1) * pageSize - pageSize;
+//        List<Order> list = orderService.getOrderByPage(start, pageSize);
+//        return MaoqinObject.ok(200, "sucess", list);
+//    }
+//
+//    @PostMapping("/getOrderGoodsNameByOrderid")
+//    public List<OrderGoodsName> getOrderGoodsNameByOrderid(String orderid) {
+//        List<OrderGoodsName> list = orderService.getOrderGoodsNameByOrderid(orderid);
+//        return list;
+//    }
+//
+//    @PostMapping("/insertOrder")
+//    public int insertOrder(String orderid, String name, String goodsid, BigDecimal price, Integer numbers, Date orderTime, String orderStatus) {
+//        return orderService.insertOrder(orderid, name, goodsid, price, numbers, orderTime, orderStatus);
+//    }
+//
+//    @PostMapping("/updateOrder")
+//    public int updateOrder(String orderid, String orderStatus) {
+//        return orderService.updateOrder(orderid, orderStatus);
+//    }
 
     @PostMapping("/payOrder")
     @RequiresAuthentication
     @Transactional(rollbackFor = RuntimeException.class)
     public MaoqinObject payOrder(String orderid, HttpServletRequest request) {
+        log.info("支付订单接口入参orderid："+orderid);
         String username = JWTUtil.getCurrentUsername(request);
         try {
             //校验入参
@@ -133,34 +132,34 @@ public class OrderController {
                 if (goods.getNumbers() < order.getNumbers()) {
                     return MaoqinObject.error("目前商品数量不足");
                 }
-
                 BigDecimal balance = user.getBalance().subtract(total);
                 Integer blResult = userService.updateBalance(username, balance);
                 if (blResult == 0) {
                     return MaoqinObject.error("支付失败，请重试");
-
                 }
                 Integer nu = goods.getNumbers() - order.getNumbers();
                 Integer nuResult = goodsService.updateGoods(goods.getGoodsid(), nu);
                 if (nuResult == 0) {
+                    log.error("更新库存失败，执行回滚");
                     throw new RuntimeException();
                 }
                 Integer paresult = orderService.updateOrder(orderid, "pay");
                 if (paresult == 0) {
+                    log.error("更新订单状态失败，执行回滚");
                     throw new RuntimeException();
                 }
             }
             return MaoqinObject.ok(200, "支付成功，谢谢惠顾", orderService.getOrderGoodsNameByOrderid(orderid));
         } catch (Exception e) {
+            log.error("payOrder接口异常，异常信息为"+e.getMessage());
             e.printStackTrace();
         }
         return MaoqinObject.error("支付失败，请重试");
     }
 
-    @PostMapping("newCreatOrder")
+    @PostMapping("/newCreatOrder")
     @RequiresAuthentication
     public synchronized MaoqinObject newCreatOrder(String goodsid, Integer numbers, HttpServletRequest request) {
-        MaoqinObject maoqinObject = new MaoqinObject();   //新建自定义的对象来接受返回值
         String username = JWTUtil.getCurrentUsername(request);  //通过请求解密用户名
         try {
             if (StringTools.isNullOrEmpty(goodsid)) {        //校验货号入参
@@ -196,7 +195,7 @@ public class OrderController {
         return MaoqinObject.ok(500, "下单异常");        //下单有try catch来捕获异常，所以这里就是下单不成功，需要返回信息
     }
 
-    @PostMapping("createOrder")
+    @PostMapping("/createOrder")
     @RequiresAuthentication
     public MaoqinObject createOrder(HttpServletRequest request, String goodsid, Integer numbers) {
         MaoqinObject maoqinObject = new MaoqinObject();
