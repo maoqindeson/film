@@ -28,8 +28,8 @@ public class FilmTask {
                 //应该轮询所有团购记录,而不是只看id为1的
                 Date endDate = groupBuy.getEndDate();
                 //只需要判断结束时间是否小于结束时间
-                // 如果团购结束时间到了,则更新团购状态,否则不更新
-                if (groupBuy.getEndDate().compareTo(new Date()) < 0) {
+                // 如果团购结束时间到了,并且团购状态不为3(未完成),则更新团购状态,否则不更新
+                if (groupBuy.getEndDate().compareTo(new Date()) < 0 || groupBuy.getStatus()!=3) {
                     //查询该团购成功购买的人数,如果达到了则团购成功,否则团购失败
                     Integer num = groupBuyService.countGroupBuyNumbers(groupBuy.getCreatedDate(), endDate, groupBuy.getId());  //查询已售出的团购商品数量
                     if (num>groupBuy.getMiniNum()){
