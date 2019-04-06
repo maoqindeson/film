@@ -41,15 +41,10 @@ public class GroupBuyController {
     @Autowired
     private GoodsService goodsService;
 
-//    @PostMapping("/getGroupBuyByProductId")
-//    public GroupBuy getGroupBuyByProductId(String productId) {
-//        GroupBuy groupBuy = groupBuyService.getGroupBuyByProductId(productId);
-//        return groupBuy;
-//    }
-
-    @PostMapping("/insertGroupBuy")
+    //发起(新增)一个团购
+    @PostMapping("/createGroupBuy")
     @RequiresAuthentication
-    public MaoqinObject insertGroupBuy(String productId, BigDecimal price, Integer miniNum, Date endDate, Date createdDate) {
+    public MaoqinObject createGroupBuy(String productId, BigDecimal price, Integer miniNum, Date endDate) {
         GroupBuy groupBuy = new GroupBuy();
         if (price == null || price.compareTo(new BigDecimal(0)) <= 0) {
             return MaoqinObject.error("不能不设置价格");
@@ -57,10 +52,7 @@ public class GroupBuyController {
         if (StringTools.isNullOrEmpty(productId)) {
             return MaoqinObject.error("不能不设置货号");
         }
-        if (createdDate == null || createdDate.compareTo(new Date()) < 0) {
-            return MaoqinObject.error("设置开团时间不正确");
-        }
-        if (endDate == null || endDate.compareTo(createdDate) < 0) {
+        if (endDate == null || endDate.compareTo(new Date()) < 0) {
             return MaoqinObject.error("设置团购结束时间不正确");
         }
         if (miniNum == null || miniNum <= 0) {
@@ -69,30 +61,23 @@ public class GroupBuyController {
         groupBuy.setPrice(price);
         groupBuy.setProductId(productId);
         groupBuy.setStatus(null);
-        groupBuy.setCreatedDate(createdDate);
+        //开团时间直接用系统当前时间即可
+        groupBuy.setCreatedDate(new Date());
         groupBuy.setEndDate(endDate);
         groupBuy.setMiniNum(miniNum);
         groupBuy.setUpdatedDate(null);
-        int resulrt = groupBuyService.insertGroupBuy(groupBuy);
-        if (resulrt == 0) {
+        int result = groupBuyService.insertGroupBuy(groupBuy);
+        if (result == 0) {
             log.error("插入失败");
             return MaoqinObject.error("生成团购失败");
         }
-        return MaoqinObject.ok(resulrt, "插入成功");
+        return MaoqinObject.ok(result, "插入成功");
     }
 
-    //    @PostMapping("/updateGroupBuyStatus")
-//    public MaoqinObject updateGroupBuyStatus(String productId, Integer status) {
-//        return MaoqinObject.ok();
-//    }
-//    @PostMapping("/updateBuyUpdatedDate")
-//    public MaoqinObject updateGroupBuyUpdatedDate(String productId, Date updatedDate) {
-//        return MaoqinObject.ok();
-//    }
-    @PostMapping("/inGroupBuy")
+    @PostMapping("/joinGroupBuy")
     @RequiresAuthentication
     @Transactional(rollbackFor = RuntimeException.class)
-    public MaoqinObject inGroupBuy(Integer id, Integer numbers, HttpServletRequest request) {
+    public MaoqinObject joinGroupBuy(Integer id, Integer numbers, HttpServletRequest request) {
         String username = JWTUtil.getCurrentUsername(request);
         try {
             if (id == null || id == 0) {        //校验团购号入参
@@ -155,7 +140,6 @@ public class GroupBuyController {
                 log.error("更新库存失败，执行回滚");
                 throw new RuntimeException();
             }
-//            Integer paresult = orderService.updateOrder(StringTools.getTradeno(), "pay");
             Integer paresult = orderService.updateOrder(order.getOrderid(), "pay");
             if (paresult == 0) {
                 log.error("更新订单状态失败，执行回滚");
