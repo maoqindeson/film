@@ -1,7 +1,5 @@
 package com.leoleo.film.controller;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.leoleo.film.entity.Goods;
 import com.leoleo.film.entity.GroupBuy;
 import com.leoleo.film.entity.Order;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -32,8 +29,6 @@ import java.util.List;
 public class GroupBuyController {
     @Autowired
     private GroupBuyService groupBuyService;
-    @Autowired
-    private OrderController orderController;
     @Autowired
     private OrderService orderService;
     @Autowired
