@@ -158,7 +158,7 @@ public class GroupBuyController {
     public MaoqinObject requestApi(String length,String token) {
         Map<String,String> headMap = new HashMap<>();
         headMap.put("token",token);
-        Object result = HttpClientUtil.getPostResponse("http://47.107.102.196:8083/common/test/{length}",headMap);
+        Object result = HttpClientUtil.getPostResponse("http://47.107.102.196:8083/common/test/"+length,headMap);
         return MaoqinObject.ok(200, "请求成功", result);
     }
 
