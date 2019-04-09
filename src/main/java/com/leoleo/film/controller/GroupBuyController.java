@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -151,12 +153,15 @@ public class GroupBuyController {
         return groupBuyService.countGroupBuyNumbers(createdDate, endDate, groupBuyId);
     }
 
-    @GetMapping("/requestApi")
+    @RequestMapping("/requestApi")
     @ResponseBody
-    public MaoqinObject requestApi() {
-        String result = HttpClientUtil.getGetResponse("http://47.107.102.196:8083/common/getString?length=10");
+    public MaoqinObject requestApi(String length,String token) {
+        Map<String,String> headMap = new HashMap<>();
+        headMap.put("token",token);
+        Object result = HttpClientUtil.getPostResponse("http://47.107.102.196:8083/common/test/{length}",headMap);
         return MaoqinObject.ok(200, "请求成功", result);
     }
+
 
 }
 
