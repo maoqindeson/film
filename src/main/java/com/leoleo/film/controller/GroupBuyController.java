@@ -8,6 +8,7 @@ import com.leoleo.film.service.GoodsService;
 import com.leoleo.film.service.GroupBuyService;
 import com.leoleo.film.service.OrderService;
 import com.leoleo.film.service.UserService;
+import com.leoleo.film.utils.HttpClientUtil;
 import com.leoleo.film.utils.JWTUtil;
 import com.leoleo.film.utils.MaoqinObject;
 import com.leoleo.film.utils.StringTools;
@@ -15,9 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -95,10 +94,10 @@ public class GroupBuyController {
             Date endDate = groupBuy.getEndDate();
             Integer groupBuyID = groupBuy.getId();
             Integer num = groupBuyService.countGroupBuyNumbers(createdDate, endDate, groupBuyID);  //查询已售出的团购商品数量
-            if (null==num){
-                num=0;
+            if (null == num) {
+                num = 0;
             }
-            Integer nu =num+numbers;
+            Integer nu = num + numbers;
             if (nu > groupBuy.getMiniNum()) {
                 return MaoqinObject.error("团购失败，货不够");
             }
@@ -141,7 +140,7 @@ public class GroupBuyController {
                 throw new RuntimeException();
             }
             return MaoqinObject.ok(200, "团购成功,等待结果");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return MaoqinObject.ok(500, "团购失败");
@@ -152,6 +151,12 @@ public class GroupBuyController {
         return groupBuyService.countGroupBuyNumbers(createdDate, endDate, groupBuyId);
     }
 
+    @GetMapping("/requestApi")
+    @ResponseBody
+    public MaoqinObject requestApi() {
+        String result = HttpClientUtil.getGetResponse("47.107.102.196:8083/common/getString?length=10");
+        return MaoqinObject.ok(200, "请求成功", result);
+    }
 
 }
 
