@@ -154,7 +154,7 @@ public class GroupBuyController {
     @GetMapping("/requestApi")
     @ResponseBody
     public MaoqinObject requestApi() {
-        String result = HttpClientUtil.getGetResponse("47.107.102.196:8083/common/getString?length=10");
+        String result = HttpClientUtil.getGetResponse("http://47.107.102.196:8083/common/getString?length=10");
         return MaoqinObject.ok(200, "请求成功", result);
     }
 
