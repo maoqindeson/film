@@ -187,7 +187,7 @@ public class OrderController {
             if (result == 0) {                     //校验下单是否成功
                 return MaoqinObject.ok(500, "生成订单失败");
             }
-            return MaoqinObject.ok(500, "下单成功，尽快支付", orderService.getOrderGoodsNameByOrderid(orderid));              //返回下单成功信息
+            return MaoqinObject.ok(200, "下单成功，尽快支付", orderService.getOrderGoodsNameByOrderid(orderid));              //返回下单成功信息
         } catch (Exception e) {
             e.printStackTrace();
         }
